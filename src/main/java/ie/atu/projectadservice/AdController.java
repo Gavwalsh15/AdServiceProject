@@ -13,8 +13,14 @@ import java.util.List;
 public class AdController {
     private final AdService adService;
 
+    private final BankServiceClient bankServiceClient;
+
+
     @Autowired
-    public AdController(AdService adService) {this.adService = adService;}
+    public AdController(AdService adService, BankServiceClient bankServiceClient) {
+        this.adService = adService;
+        this.bankServiceClient = bankServiceClient;
+    }
 
     @PostMapping("/create")
     public ResponseEntity<String> signUp(@Valid @RequestBody CreateAd ad) {
@@ -25,5 +31,13 @@ public class AdController {
     @GetMapping("/getads")
     public List<CreateAd> getAllAds() {
         return adService.getAllAds();
+    }
+
+    @PostMapping("/buyproduct")
+    public ResponseEntity<String> buyProduct(@RequestBody PurchaseRequest purchaseRequest) {
+        bankServiceClient.buyProduct(purchaseRequest);
+        adService.deleteAd(purchaseRequest.getProductTitle(), purchaseRequest.getAdCreateTime());
+
+        return new ResponseEntity<>("Product successfully Purchased", HttpStatus.CREATED);
     }
 }
