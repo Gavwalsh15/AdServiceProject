@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -39,5 +40,13 @@ public class AdController {
         adService.deleteAd(purchaseRequest.getProductTitle(), purchaseRequest.getAdCreateTime());
 
         return new ResponseEntity<>("Product successfully Purchased", HttpStatus.CREATED);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<String> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        StringBuilder errorMessage = new StringBuilder();
+        ex.getBindingResult().getAllErrors().forEach(error -> errorMessage.append(error.getDefaultMessage()).append("\n"));
+
+        return new ResponseEntity<>(errorMessage.toString(), HttpStatus.BAD_REQUEST);
     }
 }
