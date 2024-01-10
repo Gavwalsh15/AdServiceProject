@@ -11,5 +11,4 @@ public class ProjectAdServiceApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ProjectAdServiceApplication.class, args);
 	}
-
 }
